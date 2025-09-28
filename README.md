@@ -2,7 +2,7 @@
 
 ## Features
 
-- Support hidden Nav Grok, Messages, and Communities
+- Support hidden Nav: Grok, Messages, and Communities
 
 ![](./image/demo1.png)
 

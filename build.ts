@@ -55,8 +55,8 @@ async function buildUserScript() {
   console.log("🔥  Built user-script.");
   const { stdout } = await runCommand(
     isDev
-      ? "cd ./user-script && bun build --target=browser ./index.ts "
-      : "cd ./user-script && bun build --target=browser ./index.ts "
+      ? "bun build --target=browser ./user-script/index.ts"
+      : "bun build --target=browser ./user-script/index.ts"
   );
   const userScriptLines: string[] = ["// ==UserScript=="];
   Object.entries(UserScriptConfig).map(([key, value]) => {

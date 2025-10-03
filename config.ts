@@ -1,4 +1,4 @@
-import { name, description, version } from "./package.json";
+import { description, version } from "./package.json";
 
 const icon =
   "https://raw.githubusercontent.com/qzda/x-userscript/main/image/logo.svg";
@@ -9,7 +9,7 @@ const userScriptUrl =
 type configValue = string | number;
 
 export const UserScriptConfig: Record<string, configValue | configValue[]> = {
-  name,
+  name: "X Userscript",
   description,
   author: "qzda",
   version,

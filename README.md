@@ -2,7 +2,7 @@
 
 ## Features
 
-- Support hidden Nav: Grok, Messages, and Communities
+- Support hidden Nav items (Support Mobile)
 
 ![](./image/demo1.png)
 

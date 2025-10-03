@@ -1,8 +1,8 @@
 // ==UserScript==
-// @name x-userscript
+// @name X Userscript
 // @description X/Twitter Userscript
 // @author qzda
-// @version 0.0.1
+// @version 0.0.2
 // @match https://x.com/*
 // @namespace https://github.com/qzda/x-userscript/
 // @supportURL https://github.com/qzda/x-userscript/issues/new
@@ -21,7 +21,7 @@
 // @grant GM_addElement
 // ==/UserScript==
 
-// ../node_modules/@qzda/prolog/dist/index.js
+// node_modules/@qzda/prolog/dist/index.js
 var Colors = {
   black: 30,
   red: 31,
@@ -31,6 +31,7 @@ var Colors = {
   magenta: 35,
   cyan: 36,
   white: 37,
+  gray: 90,
   brightBlack: 90,
   brightRed: 91,
   brightGreen: 92,
@@ -49,6 +50,7 @@ var Backgrounds = {
   bgMagenta: 45,
   bgCyan: 46,
   bgWhite: 47,
+  bgGray: 100,
   bgBrightBlack: 100,
   bgBrightRed: 101,
   bgBrightGreen: 102,
@@ -75,14 +77,14 @@ var Obj = Object.assign(Object.assign(Object.assign({}, Object.keys(Colors).redu
 }, {}));
 var dist_default = Obj;
 
-// ../package.json
+// package.json
 var name = "x-userscript";
-var version = "0.0.1";
+var version = "0.0.2";
 
-// ../utils/dev.ts
+// utils/dev.ts
 var isDev = false;
 
-// ../utils/log.ts
+// utils/log.ts
 function log(...arg) {
   console.log(dist_default.bgBlack(dist_default.brightYellow(`${name} v${version}`)), ...arg);
 }
@@ -92,14 +94,41 @@ function devLog(...arg) {
   }
 }
 
-// initMenuCommand.ts
-var menuIds = [];
+// user-script/nav.ts
 var navItems = [
-  { key: "Grok", selector: "nav a[href='/i/grok']" },
-  { key: "Messages", selector: "nav a[href='/messages']" },
-  { key: "Communities", selector: "nav a[href$='/communities']" }
+  { key: "Grok", selector: "nav a[href='/i/grok']", defaultValue: true },
+  { key: "Messages", selector: "nav a[href='/messages']", defaultValue: true },
+  {
+    key: "Communities",
+    selector: "nav a[href$='/communities']",
+    defaultValue: true
+  },
+  { key: "List", selector: "nav a[href$='/lists']" },
+  {
+    key: "Bookmarks",
+    selector: "nav a[href='/i/bookmarks']"
+  },
+  { key: "Premium", selector: "nav a[href^='/i/premium']", defaultValue: true },
+  {
+    key: "Organization",
+    selector: "nav a[href^='/i/verified-orgs-signup']",
+    defaultValue: true
+  }
 ];
-function initMenuCommand() {
+function applyVisibility() {
+  devLog("applyVisibility");
+  navItems.forEach((nav) => {
+    const hidden = GM_getValue(nav.key, nav.defaultValue || false);
+    const navEle = document.querySelector(nav.selector);
+    if (navEle) {
+      navEle.style.display = hidden ? "none" : "inherit";
+    }
+  });
+}
+
+// user-script/menu.ts
+var menuIds = [];
+function initMenu() {
   while (menuIds.length) {
     const id = menuIds.pop();
     if (id) {
@@ -107,31 +136,23 @@ function initMenuCommand() {
     }
   }
   navItems.forEach((nav) => {
-    const hidden = GM_getValue(nav.key, true);
+    const hidden = GM_getValue(nav.key, nav.defaultValue || false);
     const id = GM_registerMenuCommand(`${hidden ? "✅" : "❌"} Hidden ${nav.key}`, () => {
       GM_setValue(nav.key, !hidden);
-      initMenuCommand();
-      const navEle2 = document.querySelector(nav.selector);
-      if (navEle2) {
-        navEle2.style.display = !hidden ? "none" : "inherit";
-      }
+      initMenu();
+      applyVisibility();
     }, { autoClose: false });
     menuIds.push(id);
-    const navEle = document.querySelector(nav.selector);
-    if (navEle) {
-      navEle.style.display = hidden ? "none" : "inherit";
-    }
   });
-  devLog("initMenuCommand");
+  devLog("initMenu");
 }
 
-// index.ts
+// user-script/index.ts
 log();
-initMenuCommand();
-var observer = new MutationObserver(() => {
-  const nav = document.querySelector("nav");
-  if (nav) {
-    initMenuCommand();
+initMenu();
+var navInterval = setInterval(() => {
+  if (document.querySelector("nav")) {
+    clearInterval(navInterval);
+    applyVisibility();
   }
-});
-observer.observe(document.body, { childList: true, subtree: true });
+}, 200);

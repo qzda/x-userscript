@@ -1,15 +1,14 @@
 "use strict";
 import { log } from "../utils/log";
-import { initMenuCommand } from "./initMenuCommand";
+import { initMenu } from "./menu";
+import { applyVisibility } from "./nav";
 
 log();
-initMenuCommand();
+initMenu();
 
-const observer = new MutationObserver(() => {
-  const nav = document.querySelector("nav");
-  if (nav) {
-    initMenuCommand();
+const navInterval = setInterval(() => {
+  if (document.querySelector("nav")) {
+    clearInterval(navInterval);
+    applyVisibility();
   }
-});
-
-observer.observe(document.body, { childList: true, subtree: true });
+}, 200);

@@ -48,3 +48,4 @@ bundle/firefox
 
 # xcode project
 xcuserdata/
+bun.lock

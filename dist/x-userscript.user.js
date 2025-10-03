@@ -156,3 +156,11 @@ var navInterval = setInterval(() => {
     applyVisibility();
   }
 }, 200);
+window.addEventListener("click", () => {
+  const navInterval2 = setInterval(() => {
+    if (document.querySelector("nav")) {
+      clearInterval(navInterval2);
+      applyVisibility();
+    }
+  }, 200);
+});

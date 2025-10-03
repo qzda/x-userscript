@@ -12,3 +12,12 @@ const navInterval = setInterval(() => {
     applyVisibility();
   }
 }, 200);
+
+window.addEventListener("click", () => {
+  const navInterval = setInterval(() => {
+    if (document.querySelector("nav")) {
+      clearInterval(navInterval);
+      applyVisibility();
+    }
+  }, 200);
+});
